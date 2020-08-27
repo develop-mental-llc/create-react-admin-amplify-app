@@ -6,7 +6,6 @@
   "repository": "git@github.com:develop-mental-llc/create-react-admin-amplify-app.git",
   "license": "ISC",
   "author": "Raphael Thomazella <thomazella9@gmail.com> and Develop Mental LLC",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "rimraf build && tsc && cp -r src/shell build/shell",
