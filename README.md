@@ -1,5 +1,38 @@
 # Create React Admin Amplify App
 
+## Before you start
+
+**Double check you have installed**
+
+- [node](https://nodejs.org/en/download/)
+- `@aws-amplify/cli` from npm. Run `npm install -g @aws-amplify/cli`
+  or see the [official install page](https://docs.amplify.aws/cli/start/install)
+
+## Usage
+
+> craaa is short for `create-react-admin-amplify-app`
+
+| cli flag  | meaning   | example                              |
+| --------- | --------- | ------------------------------------ |
+| arg 0     | app name  | create-react-admin-amplify-app myApp |
+| -h --help | help text | create-react-admin-amplify-app -h    |
+
+## Demo
+
+See the demo folder for a sample app.
+
+## Development
+
+install [yarn classic](https://classic.yarnpkg.com/en/docs/install)
+
+To test the script locally
+
+- clone repo
+- `yarn install`
+- `yarn dev`
+
+It will execute the script in your terminal.
+
 ## Iteration 1 manual steps
 
 - `npx create-react-app <name> <args>`
@@ -19,15 +52,3 @@
 #### Notes
 
 if not using AMAZON_COGNITO_USER_POOLS as amplify auth option, app.js boilerplate needs to change
-
-## Before you start
-
-**Double check you have installed**
-
-- [node](https://nodejs.org/en/download/)
-- `@aws-amplify/cli` from npm. Run `npm install -g @aws-amplify/cli`
-or see the [official install page](https://docs.amplify.aws/cli/start/install)
-
-## Demo
-
-See the demo folder for a sample app.
