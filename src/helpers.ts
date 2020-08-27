@@ -1,5 +1,6 @@
 import { Interface } from "readline";
 import { inspect } from "util";
+import { spawnSync, spawn } from "child_process";
 
 export const isDebug = () => process.env.CRAAA_DEBUG;
 export const debuglog = (obj: any) => {
@@ -28,4 +29,14 @@ export function questionUser(reader: Interface, question: string) {
       reject(error);
     }
   });
+}
+
+export function spawnAndPrintLine(message: string, info: string[]) {
+  printLine(message);
+  return spawnSync(info[0], info.slice(1));
+}
+
+export function spawnAsyncAndPrintLine(message: string, info: string[]) {
+  printLine(message);
+  return spawn(info[0], info.slice(1));
 }

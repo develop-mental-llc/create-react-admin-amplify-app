@@ -1,7 +1,7 @@
 import readline from "readline";
-import { mkdirSync, readdirSync, statSync } from "fs";
+import { statSync } from "fs";
 import { resolve } from "path";
-import { debuglog, die, questionUser, printLine } from "./helpers";
+import { debuglog, die, questionUser, printLine, spawnAndPrintLine, spawnAsyncAndPrintLine } from "./helpers";
 
 const cliReader = readline.createInterface({
   input: process.stdin,
@@ -15,12 +15,12 @@ async function main() {
   });
   printLine("Welcome to Create React Admin Amplify App!");
   /**
-   * Create React App
+   * Setup
    */
   const appName = await questionUser(cliReader, "Name for your app:");
   const response = await questionUser(
     cliReader,
-    `Making folder ${appName} at current path ${process.cwd()} and running create-react-app. Is this ok? (y/n)`
+    `Using folder '${appName}' at current path '${process.cwd()}'. Is this ok? (y/n)`
   );
   const absoluteProjectPath = resolve(process.cwd(), appName);
   debuglog({ response });
@@ -38,17 +38,56 @@ async function main() {
       throw Error(`folder ${absoluteProjectPath} exists but is not a folder. Please remove it or use another name`);
     }
   } catch (error) {
-    if (error.code === "ENOENT") {
-      mkdirSync(absoluteProjectPath);
-    } else {
+    if (error.code !== "ENOENT") {
       throw error;
     }
   }
-  const folderResult = await readdirSync(absoluteProjectPath);
-  debuglog({ folderResult });
-  if (folderResult.length) {
-    throw Error(`folder ${absoluteProjectPath} is not empty. Please remove it or use another name`);
+  /**
+   * CRA
+   */
+  const cra = spawnAndPrintLine("Running create-react-app, please wait...", ["npx", "create-react-app", appName]);
+  if (cra.error) {
+    die(cra.error.message);
   }
+  /**
+   * RA
+   */
+  const ra = spawnAndPrintLine("Adding react-admin, please wait...", [
+    "npm",
+    "install",
+    "@aws-amplify/core",
+    "@aws-amplify/api",
+    "@aws-amplify/auth",
+    "react-admin-amplify",
+  ]);
+  if (ra.error) {
+    die(ra.error.message);
+  }
+  process.chdir(absoluteProjectPath);
+  printLine("");
+  printLine("Amplify setup instructions:");
+  printLine("name:                   press Enter (accept default)");
+  printLine("environment:            press Enter (accept default)");
+  printLine("default editor:         choose");
+  printLine("type of app:            choose");
+  printLine("javascript framework:   choose");
+  printLine("source directory:       press Enter (accept default)");
+  printLine("distribution directory: press Enter (accept default)");
+  printLine("start command:          press Enter (accept default)");
+  printLine("build command:          press Enter (accept default)");
+  printLine("aws profile:            choose");
+  printLine("You will need to provide AWS credentials, see:");
+  printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");
+  printLine("https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_identity-management.html");
+  await questionUser(cliReader, "Press Enter when ready");
+  cliReader.pause();
+  /**
+   * Amplify
+   */
+  const amp = spawnAsyncAndPrintLine("", ["amplify", "init"]);
+  amp.stderr.pipe(process.stderr);
+  amp.stdout.pipe(process.stdout);
+  process.stdin.pipe(amp.stdin);
 }
 
 // eslint-disable-next-line
