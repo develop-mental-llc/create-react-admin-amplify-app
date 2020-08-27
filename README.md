@@ -27,3 +27,7 @@ if not using AMAZON_COGNITO_USER_POOLS as amplify auth option, app.js boilerplat
 - [node](https://nodejs.org/en/download/)
 - `@aws-amplify/cli` from npm. Run `npm install -g @aws-amplify/cli`
 or see the [official install page](https://docs.amplify.aws/cli/start/install)
+
+## Demo
+
+See the demo folder for a sample app.

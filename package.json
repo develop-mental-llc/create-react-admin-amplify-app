@@ -9,6 +9,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf build && tsc && cp -r src/shell build/shell",
+    "dev": "yarn build && node build/bootstrap.js",
     "postinstall": "yarn postinstall",
     "lint": "eslint \"./src/**/*.ts*\"",
     "prettier": "prettier --write",
