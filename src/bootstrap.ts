@@ -1,7 +1,7 @@
 import readline from "readline";
 import { statSync } from "fs";
 import { resolve } from "path";
-import { debuglog, die, questionUser, printLine, spawnAndPrintLine, spawnAsyncAndPrintLine } from "./helpers";
+import { debuglog, die, questionUser, printLine, spawnAndPrintLine, spawnAsyncAndPrintLine, helpText } from "./helpers";
 
 const cliReader = readline.createInterface({
   input: process.stdin,
@@ -9,15 +9,24 @@ const cliReader = readline.createInterface({
 });
 
 async function main() {
+  const args = process.argv.slice(2);
   debuglog({
-    args: process.argv.slice(2),
+    args,
     pid: process.pid,
   });
+  if (args[0] == "-h" || args[0] == "--help" || /^--?/.test(args[0])) {
+    helpText();
+    return;
+  }
+  let appName = args[0];
   printLine("Welcome to Create React Admin Amplify App!");
   /**
    * Setup
    */
-  const appName = await questionUser(cliReader, "Name for your app:");
+  if (!appName) {
+    const name = await questionUser(cliReader, "Name for your app:");
+    appName = name;
+  }
   const response = await questionUser(
     cliReader,
     `Using folder '${appName}' at current path '${process.cwd()}'. Is this ok? (y/n)`
@@ -90,5 +99,7 @@ async function main() {
   process.stdin.pipe(amp.stdin);
 }
 
-// eslint-disable-next-line
-main().catch(error => console.log(error));
+main()
+  // eslint-disable-next-line
+  .catch(error => console.log(error))
+  .then(() => process.exit(0));

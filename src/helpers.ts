@@ -40,3 +40,8 @@ export function spawnAsyncAndPrintLine(message: string, info: string[]) {
   printLine(message);
   return spawn(info[0], info.slice(1));
 }
+
+export function helpText() {
+  printLine("usage: create-react-admin-amplify-app [name]");
+  printLine("Installs create-react-app, react-admin, amplify and configures boilerplate code");
+}
