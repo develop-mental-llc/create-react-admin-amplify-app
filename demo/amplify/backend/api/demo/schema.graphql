@@ -1,0 +1,15 @@
+type Post
+@model
+@key(
+  name: "byViews"
+  fields: ["views", "published_at"]
+  queryField: "postsByView"
+) {
+  id: ID!
+  title: String!
+  body: String!
+  teaser: String
+  published_at: AWSDate!
+  average_note: String
+  views: Int!
+}
