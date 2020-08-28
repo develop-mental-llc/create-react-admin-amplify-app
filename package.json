@@ -11,6 +11,7 @@
     "build": "rimraf build && tsc && cp -r src/shell build/shell",
     "dev": "npm run build && node build/bootstrap.js",
     "lint": "eslint \"./src/**/*.ts*\"",
+    "lint-staged": "lint-staged",
     "prettier": "prettier --write",
     "prettier:all": "prettier --write 'src/*.ts'",
     "sort-package-json": "sort-package-json",

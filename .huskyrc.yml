@@ -1,2 +1,2 @@
 hooks:
-  pre-commit: $(npm bin lint-staged)/lint-staged
+  pre-commit: npm run lint-staged
