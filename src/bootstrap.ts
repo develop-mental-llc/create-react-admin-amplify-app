@@ -1,7 +1,17 @@
 import readline from "readline";
 import { statSync } from "fs";
 import { resolve } from "path";
-import { debuglog, die, questionUser, printLine, spawnAndPrintLine, spawnAsyncAndPrintLine, helpText } from "./helpers";
+import {
+  debuglog,
+  die,
+  questionUser,
+  printLine,
+  spawnAndPrintLine,
+  spawnAsyncAndPrintLine,
+  helpText,
+  skipCra,
+  skipRa,
+} from "./helpers";
 
 const cliReader = readline.createInterface({
   input: process.stdin,
@@ -29,7 +39,7 @@ async function main() {
   }
   const response = await questionUser(
     cliReader,
-    `Using folder '${appName}' at current path '${process.cwd()}'. Is this ok? (y/n)`
+    `Project will be created at '${process.cwd()}/${appName}'. Is this ok? (y/n)`
   );
   const absoluteProjectPath = resolve(process.cwd(), appName);
   debuglog({ response });
@@ -54,28 +64,36 @@ async function main() {
   /**
    * CRA
    */
-  const cra = spawnAndPrintLine("Running create-react-app, please wait...", ["npx", "create-react-app", appName]);
-  if (cra.error) {
-    die(cra.error.message);
+  if (!skipCra()) {
+    const cra = spawnAndPrintLine("Running create-react-app, please wait...", ["npx", "create-react-app", appName]);
+    if (cra.error) {
+      die(cra.error.message);
+    }
+  } else {
+    debuglog("skipping create-react-app as CRAAA_SKIP_CRA is set in ENV");
   }
   /**
    * RA
    */
-  const ra = spawnAndPrintLine("Adding react-admin, please wait...", [
-    "npm",
-    "install",
-    "@aws-amplify/core",
-    "@aws-amplify/api",
-    "@aws-amplify/auth",
-    "react-admin-amplify",
-  ]);
-  if (ra.error) {
-    die(ra.error.message);
+  if (!skipRa()) {
+    const ra = spawnAndPrintLine("Adding react-admin, please wait...", [
+      "npm",
+      "install",
+      "@aws-amplify/core",
+      "@aws-amplify/api",
+      "@aws-amplify/auth",
+      "react-admin-amplify",
+    ]);
+    if (ra.error) {
+      die(ra.error.message);
+    }
+  } else {
+    debuglog("skipping react-admin as CRAAA_SKIP_RA is set in ENV");
   }
   process.chdir(absoluteProjectPath);
   printLine("");
-  printLine("Amplify setup is insteractive");
-  printLine("- Accept the default name (press Enter))");
+  printLine("Amplify setup will begin, it is interactive");
+  printLine("- Accept the default name (press Enter)");
   printLine("- Accept other options as you like, most of the time the default is fine");
   printLine("- You will need to provide AWS credentials, see:");
   printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");

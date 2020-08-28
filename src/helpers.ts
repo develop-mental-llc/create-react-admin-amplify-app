@@ -3,6 +3,8 @@ import { inspect } from "util";
 import { spawnSync, spawn } from "child_process";
 
 export const isDebug = () => process.env.CRAAA_DEBUG;
+export const skipCra = () => process.env.CRAAA_SKIP_CRA;
+export const skipRa = () => process.env.CRAAA_SKIP_RA;
 export const debuglog = (obj: any) => {
   if (!isDebug()) {
     return;
