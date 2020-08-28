@@ -1,6 +1,6 @@
 '*.{ts,tsx,js,cjs,mjs,jsx}':
-  - yarn lint --fix
-  - yarn prettier --write
+  - npm run lint --fix
+  - npm run prettier --write
 package.json:
-  - yarn sort-package-json
-  - yarn prettier --write
+  - npm run sort-package-json
+  - npm run prettier --write

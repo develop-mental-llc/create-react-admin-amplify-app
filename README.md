@@ -23,13 +23,11 @@ See the demo folder for a sample app.
 
 ## Development
 
-install [yarn classic](https://classic.yarnpkg.com/en/docs/install)
-
 To test the script locally
 
 - clone repo
-- `yarn install`
-- `yarn dev`
+- `npm install`
+- `npm run dev`
 
 It will execute the script in your terminal.
 

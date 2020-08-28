@@ -9,11 +9,11 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf build && tsc && cp -r src/shell build/shell",
-    "dev": "yarn build && node build/bootstrap.js",
-    "postinstall": "yarn postinstall",
+    "dev": "npm run build && node build/bootstrap.js",
     "lint": "eslint \"./src/**/*.ts*\"",
     "prettier": "prettier --write",
     "prettier:all": "prettier --write 'src/*.ts'",
+    "sort-package-json": "sort-package-json",
     "test": "jest"
   },
   "dependencies": {
