@@ -74,21 +74,13 @@ async function main() {
   }
   process.chdir(absoluteProjectPath);
   printLine("");
-  printLine("Amplify setup instructions:");
-  printLine("name:                   press Enter (accept default)");
-  printLine("environment:            press Enter (accept default)");
-  printLine("default editor:         choose");
-  printLine("type of app:            choose");
-  printLine("javascript framework:   choose");
-  printLine("source directory:       press Enter (accept default)");
-  printLine("distribution directory: press Enter (accept default)");
-  printLine("start command:          press Enter (accept default)");
-  printLine("build command:          press Enter (accept default)");
-  printLine("aws profile:            choose");
-  printLine("You will need to provide AWS credentials, see:");
+  printLine("Amplify setup is insteractive");
+  printLine("- Accept the default name (press Enter))");
+  printLine("- Accept other options as you like, most of the time the default is fine");
+  printLine("- You will need to provide AWS credentials, see:");
   printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");
   printLine("https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_identity-management.html");
-  await questionUser(cliReader, "Press Enter when ready");
+  await questionUser(cliReader, "Press Enter to begin");
   cliReader.pause();
   /**
    * Amplify
