@@ -1,6 +1,6 @@
 import readline from "readline";
 import configDeath from "death";
-import { statSync, createReadStream, createWriteStream, readFileSync, copyFile } from "fs";
+import { statSync, createReadStream, createWriteStream } from "fs";
 import { resolve } from "path";
 import { debuglog, die, questionUser, printLine, spawnAndPrintLine, helpText, skipCra, skipRa } from "./helpers";
 import { spawn } from "child_process";
@@ -184,6 +184,7 @@ async function afterAmplify() {
   /**********
    * App.js *
    ***********/
+  printLine("Updating App.js...");
   const appjsPath = resolve(absoluteProjectPath, "src/App.js");
   const appjsSourcePath = resolve(absoluteProjectPath, "../src/appjs/cognito.app.jsx");
   debuglog({ appjsPath, appjsSourcePath });
