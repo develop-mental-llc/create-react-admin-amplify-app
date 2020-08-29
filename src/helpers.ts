@@ -1,6 +1,6 @@
 import { Interface } from "readline";
 import { inspect } from "util";
-import { spawnSync, spawn } from "child_process";
+import { spawnSync } from "child_process";
 
 export const isDebug = () => process.env.CRAAA_DEBUG;
 export const skipCra = () => process.env.CRAAA_SKIP_CRA;
@@ -34,7 +34,7 @@ export function questionUser(reader: Interface, question: string) {
 }
 
 export function spawnAndPrintLine(message: string, info: string[]) {
-  printLine(message);
+  printLine(`CRAAA: ${message}`);
   return spawnSync(info[0], info.slice(1));
 }
 

@@ -1,6 +1,6 @@
 import readline from "readline";
 import configDeath from "death";
-import { statSync } from "fs";
+import { ReadStream, statSync } from "fs";
 import { resolve } from "path";
 import { debuglog, die, questionUser, printLine, spawnAndPrintLine, helpText, skipCra, skipRa } from "./helpers";
 import { spawn } from "child_process";
@@ -72,6 +72,7 @@ async function main() {
       throw error;
     }
   }
+  printLine("Depending on your internet connection the whole setup could take several minutes");
   /*******
    * CRA *
    *******/
@@ -85,15 +86,12 @@ async function main() {
   }
   process.chdir(absoluteProjectPath);
   printLine("Amplify setup will begin, it is interactive");
-  printLine("- Accept the default name (press Enter)");
-  printLine("- Accept the default build and run scripts (press Enter)");
-  printLine("- Accept the default source & distribution directories (press Enter)");
-  printLine("- Accept other options as you like, most of the time the default is fine");
-  printLine("- You will need to provide AWS credentials, see:");
+  printLine("Accept the default (press Enter) for all options");
+  printLine("Except those that require selection, choose as you like then");
+  printLine("You will need to provide AWS credentials, if you do not choose an AWS profile. See:");
   printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");
   printLine("https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_identity-management.html");
   await questionUser(cliReader, "Press Enter to begin");
-  cliReader.pause();
   /***********
    * Amplify *
    ***********/
@@ -107,6 +105,7 @@ async function main() {
       // amplify died or was killed
       cleanup(code, sig);
     } else {
+      process.stdin.unpipe(amp.stdin);
       afterAmplify().catch(asyncErrorHandler);
     }
   });
@@ -165,6 +164,7 @@ async function afterAmplify() {
       die(gql.error.message);
     }
   }
+  // console.log({ app: "js" });
 }
 
 main().catch(asyncErrorHandler);
