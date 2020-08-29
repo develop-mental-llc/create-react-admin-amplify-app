@@ -1,4 +1,5 @@
 import readline from "readline";
+import configDeath from "death";
 import { statSync } from "fs";
 import { resolve } from "path";
 import {
@@ -18,7 +19,21 @@ const cliReader = readline.createInterface({
   output: process.stdout,
 });
 
+function cleanup(code, sig) {
+  debuglog({ code, sig });
+  cliReader.close();
+  console.time("Done in");
+  if (/^SIG/.test(code)) {
+    die("aborted");
+  } else {
+    process.exit(0);
+  }
+}
+
 async function main() {
+  console.time("Done in");
+  const onDeath = configDeath({ uncaughtException: true, SIGHUP: true });
+  onDeath(cleanup);
   const args = process.argv.slice(2);
   debuglog({
     args,
@@ -94,6 +109,8 @@ async function main() {
   printLine("");
   printLine("Amplify setup will begin, it is interactive");
   printLine("- Accept the default name (press Enter)");
+  printLine("- Accept the default build and run scripts (press Enter)");
+  printLine("- Accept the default source & distribution directories (press Enter)");
   printLine("- Accept other options as you like, most of the time the default is fine");
   printLine("- You will need to provide AWS credentials, see:");
   printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");
@@ -107,9 +124,10 @@ async function main() {
   amp.stderr.pipe(process.stderr);
   amp.stdout.pipe(process.stdout);
   process.stdin.pipe(amp.stdin);
+  // allow amplify to run and keep CLI alive, register continuation callback
+  amp.on("exit", cleanup);
 }
 
 main()
-  // eslint-disable-next-line
-  .catch(error => console.log(error))
-  .then(() => process.exit(0));
+  // eslint-disable-next-line no-console
+  .catch(error => console.log(error));
