@@ -8,7 +8,7 @@
   "author": "Raphael Thomazella <thomazella9@gmail.com> and Develop Mental LLC",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf build && tsc && cp -r src/shell build/shell",
+    "build": "rimraf build && tsc",
     "dev": "npm run build && node build/bootstrap.js",
     "lint": "eslint \"./src/**/*.ts*\"",
     "lint-staged": "lint-staged",

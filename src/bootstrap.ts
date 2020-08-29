@@ -1,6 +1,6 @@
 import readline from "readline";
 import configDeath from "death";
-import { ReadStream, statSync } from "fs";
+import { statSync, createReadStream, createWriteStream, readFileSync, copyFile } from "fs";
 import { resolve } from "path";
 import { debuglog, die, questionUser, printLine, spawnAndPrintLine, helpText, skipCra, skipRa } from "./helpers";
 import { spawn } from "child_process";
@@ -9,20 +9,21 @@ const cliReader = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+let absoluteProjectPath = process.cwd();
 
 function asyncErrorHandler(error: Error) {
   debuglog(error);
-  cleanup(0, null);
+  cleanup(1, null);
 }
 
 function cleanup(code, sig) {
   debuglog({ code, sig });
   cliReader.close();
   console.time("Done in");
-  if (/^SIG/.test(code)) {
+  if (/^SIG/.test(sig)) {
     die("aborted");
   } else {
-    process.exit(0);
+    process.exit(code);
   }
 }
 
@@ -52,7 +53,7 @@ async function main() {
     cliReader,
     `Project will be created at '${process.cwd()}/${appName}'. Is this ok? (y/n)`
   );
-  const absoluteProjectPath = resolve(process.cwd(), appName);
+  absoluteProjectPath = resolve(process.cwd(), appName);
   debuglog({ response });
   debuglog({ absoluteProjectPath });
   let ok = false;
@@ -135,7 +136,7 @@ async function amplifyApi() {
 }
 
 async function afterAmplify() {
-  const ampDeps = spawnAndPrintLine("Adding project amplify dependencies, please wait...", [
+  const ampDeps = spawnAndPrintLine("Adding project Amplify dependencies, please wait...", [
     "npm",
     "install",
     "@aws-amplify/core",
@@ -166,7 +167,7 @@ async function afterAmplify() {
     ok = true;
   }
   if (!ok) {
-    const gen = spawnAndPrintLine("Adding amplify codegen, please wait...", ["amplify", "add", "codegen"]);
+    const gen = spawnAndPrintLine("Adding Amplify codegen, please wait...", ["amplify", "add", "codegen"]);
     if (gen.error) {
       die(gen.error.message);
     }
@@ -180,7 +181,20 @@ async function afterAmplify() {
       die(gql.error.message);
     }
   }
-  // console.log({ app: "js" });
+  /**********
+   * App.js *
+   ***********/
+  const appjsPath = resolve(absoluteProjectPath, "src/App.js");
+  const appjsSourcePath = resolve(absoluteProjectPath, "../src/appjs/cognito.app.jsx");
+  debuglog({ appjsPath, appjsSourcePath });
+  const reader = createReadStream(appjsSourcePath);
+  const writer = createWriteStream(appjsPath);
+  reader.pipe(writer);
+  reader.on("end", () => {
+    reader.close();
+    writer.close();
+    cleanup(0, null);
+  });
 }
 
 main().catch(asyncErrorHandler);
