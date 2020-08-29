@@ -13,7 +13,7 @@ export const debuglog = (obj: any) => {
   console.log("*debug*: ", inspect(obj));
 };
 export const printLine = (message: string) => {
-  process.stdout.write(message + "\n");
+  process.stdout.write("CRAAA: " + message + "\n");
 };
 export const die = (message: string) => {
   printLine(message);
@@ -23,7 +23,7 @@ export const die = (message: string) => {
 export function questionUser(reader: Interface, question: string) {
   return new Promise<string>((re, reject) => {
     try {
-      reader.question(question + "\n", answer => {
+      reader.question(`CRAAA: ${question}` + "\n", answer => {
         re(answer);
         reader.pause();
       });
@@ -34,7 +34,7 @@ export function questionUser(reader: Interface, question: string) {
 }
 
 export function spawnAndPrintLine(message: string, info: string[]) {
-  printLine(`CRAAA: ${message}`);
+  printLine(message);
   return spawnSync(info[0], info.slice(1));
 }
 

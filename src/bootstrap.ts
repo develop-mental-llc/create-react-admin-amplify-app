@@ -84,6 +84,9 @@ async function main() {
   } else {
     debuglog("skipping create-react-app as CRAAA_SKIP_CRA is set in ENV");
   }
+  /***********
+   * Amplify *
+   ***********/
   process.chdir(absoluteProjectPath);
   printLine("Amplify setup will begin, it is interactive");
   printLine("Accept the default (press Enter) for all options");
@@ -92,9 +95,6 @@ async function main() {
   printLine("https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html");
   printLine("https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_identity-management.html");
   await questionUser(cliReader, "Press Enter to begin");
-  /***********
-   * Amplify *
-   ***********/
   const amp = spawn("amplify", ["init"]);
   amp.stderr.pipe(process.stderr);
   amp.stdout.pipe(process.stdout);
@@ -106,6 +106,29 @@ async function main() {
       cleanup(code, sig);
     } else {
       process.stdin.unpipe(amp.stdin);
+      amplifyApi().catch(asyncErrorHandler);
+    }
+  });
+}
+
+async function amplifyApi() {
+  /*******************
+   * amplify add api *
+   *******************/
+  printLine("Amplify api setup will begin, it is interactive");
+  printLine("In 'default authorization type' choose 'Amazon Cognito User Pool'");
+  printLine("Choose other options as you like");
+  await questionUser(cliReader, "Press Enter to begin");
+  const api = spawn("amplify", ["add", "api"]);
+  api.stderr.pipe(process.stderr);
+  api.stdout.pipe(process.stdout);
+  process.stdin.pipe(api.stdin);
+  api.on("exit", (code, sig) => {
+    if (code !== 0 || sig) {
+      // amplify died or was killed
+      cleanup(code, sig);
+    } else {
+      process.stdin.unpipe(api.stdin);
       afterAmplify().catch(asyncErrorHandler);
     }
   });
@@ -132,13 +155,6 @@ async function afterAmplify() {
     }
   } else {
     debuglog("skipping react-admin as CRAAA_SKIP_RA is set in ENV");
-  }
-  /******************
-   * Amplify add api *
-   *******************/
-  const api = spawnAndPrintLine("Provisioning Amplify api, please wait...", ["amplify", "add", "api"]);
-  if (api.error) {
-    die(api.error.message);
   }
   /**********************
    * GraphQl generation *
